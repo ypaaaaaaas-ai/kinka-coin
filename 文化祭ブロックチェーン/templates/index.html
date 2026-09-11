@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}チェーン全体{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>ブロックチェーン全体</h1>
+  <p>先頭(ジェネシスブロック)から最新ブロックまで、鎖のようにつながっている様子を確認できます。</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="num">{{ chain_length }}</div><div class="label">ブロック数</div></div>
+  <div class="stat-card"><div class="num">{{ pending_count }}</div><div class="label">未承認取引</div></div>
+  <div class="stat-card"><div class="num">{{ node_count }}</div><div class="label">接続ノード数</div></div>
+  <div class="stat-card"><div class="num mono" style="font-size:1.05rem;">{{ node_name }}</div><div class="label">このノード</div></div>
+</div>
+
+<div class="panel">
+  <h2>チェーン構造</h2>
+  <div class="chain-track">
+    {% for block in chain %}
+      {% if not loop.first %}<div class="block-link">→</div>{% endif %}
+      <div class="block-card">
+        <div class="block-index">BLOCK #{{ block.index }}</div>
+        <div class="block-tx-count">取引: {{ block.transaction_count }} 件</div>
+        <div class="block-hash-label">前ブロックのハッシュ</div>
+        <div class="block-hash">{{ block.previous_hash_short }}</div>
+        <div class="block-hash-label">自身のハッシュ</div>
+        <div class="block-hash">{{ block.hash_short }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel">
+  <h2>このシステムの仕組み</h2>
+  <p style="color:var(--text-dim); font-size:0.9rem;">
+    各ブロックは「前のブロックのハッシュ値」を保持しているため、鎖のようにつながっています。
+    もし過去のブロックの内容を書き換えると、そのブロックのハッシュ値が変わり、
+    後続ブロックが持つ「前ブロックのハッシュ値」と一致しなくなります。これが改ざん検知の仕組みです。
+    <a href="{{ url_for('admin.admin_page') }}" style="color: var(--amber);">管理画面</a>で実際に試すことができます。
+  </p>
+</div>
+{% endblock %}

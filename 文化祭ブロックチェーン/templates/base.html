@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}簡易ブロックチェーン{% endblock %} | 文化祭ブロックチェーン</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="frame">
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="brand-mark">⛓</span>
+      <span class="brand-text">文化祭ブロックチェーン</span>
+    </a>
+    <nav class="nav">
+      <a href="{{ url_for('index') }}" class="{{ 'is-active' if request.path == '/' else '' }}">チェーン</a>
+      <a href="{{ url_for('account.me_page') }}" class="{{ 'is-active' if request.path == '/me' else '' }}">マイページ</a>
+      <a href="{{ url_for('account.account_page') }}" class="{{ 'is-active' if request.path.startswith('/account') else '' }}">アカウント</a>
+      <a href="{{ url_for('send.send_page') }}" class="{{ 'is-active' if request.path.startswith('/send') else '' }}">送金</a>
+      <a href="{{ url_for('mine.mine_page') }}" class="{{ 'is-active' if request.path.startswith('/mine') else '' }}">採掘</a>
+      <a href="{{ url_for('explorer') }}" class="{{ 'is-active' if request.path.startswith('/explorer') else '' }}">エクスプローラー</a>
+      <a href="{{ url_for('fork_page') }}" class="{{ 'is-active' if request.path.startswith('/fork') else '' }}">フォーク</a>
+      <a href="{{ url_for('node.node_page') }}" class="{{ 'is-active' if request.path.startswith('/nodes') else '' }}">ノード</a>
+      <a href="{{ url_for('qr_page') }}" class="{{ 'is-active' if request.path.startswith('/qr') else '' }}">QRコード</a>
+      <a href="{{ url_for('admin.admin_page') }}" class="nav-admin {{ 'is-active' if request.path.startswith('/admin') else '' }}">管理</a>
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-stack">
+        {% for message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <span>NODE: {{ node_name if node_name is defined else '' }}</span>
+    <span class="footer-dot">・</span>
+    <span>教育用の簡易実装です。実際の暗号資産とは異なります。</span>
+  </footer>
+</div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

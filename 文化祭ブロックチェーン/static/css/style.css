@@ -1,0 +1,261 @@
+/*
+  デザイントークン
+  ----------------
+  背景  : 深い墨紺 (#0f1420) - 台帳/夜の作業場のような落ち着き
+  台紙  : わずかに明るい紺 (#161d2e) - ブロックのカード面
+  文字  : 生成りの白 (#eef1f6)
+  アクセント(琥珀) : #e8a33d - 採掘/報酬/ハッシュの光を示す色
+  アクセント(青緑) : #3ddac0 - 検証成功・正当なチェーンを示す色
+  警告(緋) : #e5484d - 改ざん検知・エラーを示す色
+  表示  : 見出し = 'Zen Kaku Gothic New' 相当のためsystem-ui、データ = 等幅(JetBrains Mono代替)
+*/
+
+:root {
+  --bg: #0f1420;
+  --panel: #161d2e;
+  --panel-2: #1c2540;
+  --line: #2a3350;
+  --text: #eef1f6;
+  --text-dim: #9aa4bd;
+  --amber: #e8a33d;
+  --teal: #3ddac0;
+  --red: #e5484d;
+  --radius: 10px;
+  --mono: "SFMono-Regular", "JetBrains Mono", Consolas, "Courier New", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(1200px 600px at 15% -10%, #1a2340 0%, var(--bg) 55%);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.frame {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- ヘッダー ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0 18px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, var(--amber), #b9781f);
+  color: #241503;
+  font-size: 1.1rem;
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav a:hover { color: var(--text); background: var(--panel); }
+.nav a.is-active { color: var(--bg); background: var(--amber); font-weight: 600; }
+.nav a.nav-admin { border: 1px dashed var(--line); }
+.nav a.nav-admin.is-active { border-color: var(--red); background: var(--red); color: #fff; }
+
+/* ---------- フラッシュメッセージ ---------- */
+
+.flash-stack { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.flash {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  border-left: 3px solid var(--amber);
+  font-size: 0.92rem;
+}
+
+/* ---------- 共通レイアウト ---------- */
+
+.content { flex: 1; padding-top: 28px; }
+
+.page-head { margin-bottom: 26px; }
+.page-head h1 { font-size: 1.5rem; margin: 0 0 6px; }
+.page-head p { color: var(--text-dim); margin: 0; font-size: 0.92rem; }
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.stat-card .num { font-family: var(--mono); font-size: 1.5rem; color: var(--amber); }
+.stat-card .label { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 22px;
+}
+.panel h2 { margin-top: 0; font-size: 1.05rem; }
+
+/* ---------- フォーム ---------- */
+
+.form-row { margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
+.form-row label { font-size: 0.82rem; color: var(--text-dim); }
+.form-row input, .form-row select {
+  background: #0d1220;
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: var(--sans);
+}
+.form-row input:focus, .form-row select:focus {
+  outline: 2px solid var(--amber);
+  outline-offset: 1px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--amber);
+  color: #241503;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn.btn-secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); }
+.btn.btn-danger { background: var(--red); color: #fff; }
+
+/* ---------- チェーン可視化 ---------- */
+
+.chain-track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 10px 4px 22px;
+}
+
+.block-card {
+  min-width: 240px;
+  max-width: 240px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  position: relative;
+  flex-shrink: 0;
+}
+.block-card.is-broken { border-color: var(--red); box-shadow: 0 0 0 1px var(--red) inset; }
+
+.block-link {
+  width: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+.block-index {
+  font-family: var(--mono);
+  color: var(--amber);
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+.block-card.is-broken .block-index { color: var(--red); }
+
+.block-hash-label { font-size: 0.72rem; color: var(--text-dim); margin-top: 10px; }
+.block-hash { font-family: var(--mono); font-size: 0.78rem; word-break: break-all; color: var(--teal); }
+.block-card.is-broken .block-hash { color: var(--red); }
+
+.block-tx-count { font-size: 0.82rem; color: var(--text-dim); margin-top: 8px; }
+
+/* ---------- テーブル ---------- */
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+th { color: var(--text-dim); font-weight: 500; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.mono { font-family: var(--mono); font-size: 0.82rem; color: var(--text-dim); }
+
+.badge { display: inline-block; padding: 2px 9px; border-radius: 100px; font-size: 0.74rem; font-weight: 600; }
+.badge-ok { background: rgba(61, 218, 192, 0.15); color: var(--teal); }
+.badge-bad { background: rgba(229, 72, 77, 0.15); color: var(--red); }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-dim);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+
+.footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--text-dim);
+  font-size: 0.76rem;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.footer-dot { opacity: 0.6; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .nav { font-size: 0.8rem; }
+}

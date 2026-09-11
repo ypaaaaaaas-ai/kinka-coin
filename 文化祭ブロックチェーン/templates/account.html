@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}アカウント{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>アカウント作成・残高確認</h1>
+  <p>ユーザー名を入力すると、公開鍵・秘密鍵のペアが自動生成されます。作成すると、このスマホに「自分のアカウント」として記憶されます。</p>
+</div>
+
+{% if my_username %}
+<div class="panel" style="border-color: var(--teal);">
+  <p style="margin:0;">このスマホは <strong style="color: var(--teal);">{{ my_username }}</strong> さんのアカウントとして記憶されています。
+    <a href="{{ url_for('account.me_page') }}" style="color: var(--amber);">マイページを見る →</a></p>
+</div>
+{% endif %}
+
+<div class="panel">
+  <h2>新規アカウント作成</h2>
+  <form method="post" action="{{ url_for('account.account_create') }}">
+    <div class="form-row">
+      <label for="username">ユーザー名</label>
+      <input id="username" type="text" name="username" placeholder="例: たなか" required maxlength="30">
+    </div>
+    <button class="btn" type="submit">アカウントを作成</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>登録済みアカウント一覧(公開情報)</h2>
+  <p style="color:var(--text-dim); font-size:0.82rem; margin-top:-6px;">秘密鍵はサーバー内で安全に保持されており、画面には表示されません。</p>
+  {% if accounts %}
+  <table>
+    <thead>
+      <tr><th>ユーザー名</th><th>公開鍵(アドレス)</th><th>残高</th></tr>
+    </thead>
+    <tbody>
+      {% for acc in accounts %}
+      <tr {% if acc.is_me %}style="background: rgba(61,218,192,0.06);"{% endif %}>
+        <td>{{ acc.username }}{% if acc.is_me %} <span class="badge badge-ok">あなた</span>{% endif %}</td>
+        <td class="mono">{{ acc.public_key_short }}</td>
+        <td>{{ acc.balance }} コイン</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">まだアカウントがありません。上のフォームから作成してください。</div>
+  {% endif %}
+</div>
+{% endblock %}

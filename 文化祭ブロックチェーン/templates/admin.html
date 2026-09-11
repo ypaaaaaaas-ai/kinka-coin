@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}管理{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>管理画面</h1>
+  <p>ブロックの値を実際に書き換えて、改ざん検知の仕組みを体験できます。展示終了時は「全て初期化」でコインを運営に返却できます。</p>
+</div>
+
+<form method="post" action="{{ url_for('admin.admin_logout') }}" style="margin-bottom:20px;">
+  <button class="btn btn-secondary" type="submit">管理画面からログアウト</button>
+</form>
+
+<div class="panel">
+  <h2 style="color: {{ 'var(--teal)' if analysis.is_valid else 'var(--red)' }};">
+    現在のチェーンは {{ '正当です ✓' if analysis.is_valid else '改ざんが検出されました ✗' }}
+  </h2>
+  {% if not analysis.is_valid %}
+    <p style="color:var(--red); font-size:0.9rem;">ブロック #{{ analysis.broken_from_index }} 以降でハッシュの整合性が崩れています。</p>
+  {% endif %}
+  <table style="margin-top:10px;">
+    <thead><tr><th>ブロック</th><th>前ブロックとの整合性</th><th>ハッシュ再計算の一致</th></tr></thead>
+    <tbody>
+      {% for r in analysis.blocks %}
+      <tr>
+        <td>#{{ r.index }}</td>
+        <td>{% if r.previous_hash_matches %}<span class="badge badge-ok">一致</span>{% else %}<span class="badge badge-bad">不一致</span>{% endif %}</td>
+        <td>{% if r.hash_matches %}<span class="badge badge-ok">一致</span>{% else %}<span class="badge badge-bad">不一致</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="panel">
+  <h2>改ざん実験</h2>
+  <p style="color:var(--text-dim); font-size:0.88rem;">指定したブロックの、指定した番目の取引の金額を書き換えます(ハッシュは再計算されないため、以降のブロックとの整合性が崩れます)。</p>
+  <form method="post" action="{{ url_for('admin.admin_tamper') }}">
+    <div class="grid-2">
+      <div class="form-row">
+        <label for="index">ブロック番号</label>
+        <input id="index" type="number" name="index" min="0" required>
+      </div>
+      <div class="form-row">
+        <label for="tx_position">取引番号(0から始まる)</label>
+        <input id="tx_position" type="number" name="tx_position" min="0" value="0" required>
+      </div>
+    </div>
+    <div class="form-row" style="max-width:200px;">
+      <label for="new_amount">新しい金額</label>
+      <input id="new_amount" type="number" name="new_amount" min="0" required>
+    </div>
+    <button class="btn btn-danger" type="submit">この値を書き換える</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>チェーンの中身</h2>
+  <div class="chain-track">
+    {% for block in chain %}
+      {% if not loop.first %}<div class="block-link">→</div>{% endif %}
+      <div class="block-card">
+        <div class="block-index">BLOCK #{{ block.index }}</div>
+        {% for tx in block.transactions %}
+          <p style="font-size:0.78rem; color:var(--text-dim); margin:4px 0;">取引{{ loop.index0 }}: {{ tx.amount }} コイン</p>
+        {% endfor %}
+        <div class="block-hash-label">ハッシュ</div>
+        <div class="block-hash">{{ block.hash_short }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="panel">
+  <h2>全て初期化</h2>
+  <p style="color:var(--text-dim); font-size:0.88rem;">チェーン・アカウント・未承認取引を全て消去し、ジェネシスブロックのみの状態に戻します(展示終了時などに使用)。</p>
+  <form method="post" action="{{ url_for('admin.admin_reset') }}" onsubmit="return confirm('本当に全データを初期化しますか？この操作は取り消せません。');">
+    <button class="btn btn-danger" type="submit">全て初期化する</button>
+  </form>
+</div>
+{% endblock %}

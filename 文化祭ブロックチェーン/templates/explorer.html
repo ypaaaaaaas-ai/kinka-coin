@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}エクスプローラー{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>ブロックエクスプローラー</h1>
+  <p>ブロック番号・公開鍵アドレス・ハッシュ値でチェーンの中身を検索できます。</p>
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <h2>ブロック番号で検索</h2>
+    <form method="get" action="{{ url_for('explorer') }}">
+      <div class="form-row">
+        <label for="index">ブロック番号</label>
+        <input id="index" type="number" name="index" min="0" value="{{ query_index }}">
+      </div>
+      <button class="btn" type="submit">検索</button>
+    </form>
+    {% if block_result %}
+      <hr style="border-color: var(--line); margin: 16px 0;">
+      <div class="block-card" style="max-width:none;">
+        <div class="block-index">BLOCK #{{ block_result.index }}</div>
+        <p style="font-size:0.85rem; color:var(--text-dim);">{{ block_result.timestamp }}</p>
+        <div class="block-hash-label">ハッシュ</div>
+        <div class="block-hash">{{ block_result.hash }}</div>
+        <div class="block-hash-label">前ブロックのハッシュ</div>
+        <div class="block-hash">{{ block_result.previous_hash }}</div>
+        <p style="margin-top:10px; font-size:0.85rem;">取引数: {{ block_result.transactions|length }}</p>
+      </div>
+    {% elif query_index %}
+      <p style="color:var(--text-dim); margin-top:14px;">該当するブロックが見つかりませんでした。</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>アドレスの取引履歴</h2>
+    <form method="get" action="{{ url_for('explorer') }}">
+      <div class="form-row">
+        <label for="address">公開鍵(アドレス)</label>
+        <input id="address" type="text" name="address" value="{{ query_address }}" placeholder="公開鍵を貼り付け">
+      </div>
+      <button class="btn" type="submit">検索</button>
+    </form>
+    {% if tx_results is not none %}
+      {% if tx_results %}
+      <table style="margin-top:14px;">
+        <thead><tr><th>ブロック</th><th>方向</th><th>金額</th></tr></thead>
+        <tbody>
+        {% for tx in tx_results %}
+          <tr><td>#{{ tx.block_index }}</td><td>{{ tx.direction }}</td><td>{{ tx.amount }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="color:var(--text-dim); margin-top:14px;">取引が見つかりませんでした。</p>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <h2>ハッシュの一部で検索</h2>
+  <form method="get" action="{{ url_for('explorer') }}">
+    <div class="form-row" style="max-width:400px;">
+      <label for="hash">ハッシュ値(一部でも可)</label>
+      <input id="hash" type="text" name="hash" value="{{ query_hash }}">
+    </div>
+    <button class="btn" type="submit">検索</button>
+  </form>
+  {% if hash_results %}
+    <p style="margin-top:14px; color:var(--text-dim); font-size:0.85rem;">{{ hash_results|length }} 件のブロックが一致しました。</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}QRコード{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>アクセス用QRコード</h1>
+  <p>この画面を教室のスクリーンに映すか印刷すると、来場者が各自のスマホでQRコードを読み取ってこのシステムにアクセスできます。</p>
+</div>
+
+<div class="panel" style="text-align:center;">
+  <img src="{{ url_for('qr_image') }}" alt="アクセス用QRコード"
+       style="background:#fff; padding:16px; border-radius:12px; max-width:320px; width:100%;">
+  <p class="mono" style="margin-top:16px; font-size:1rem; color: var(--amber);">{{ access_url }}</p>
+  <p style="color:var(--text-dim); font-size:0.85rem;">QRコードが読み取れない場合は、上記URLを直接ブラウザに入力してください。</p>
+</div>
+
+<div class="panel">
+  <h2>うまくアクセスできないときは</h2>
+  <ul style="color:var(--text-dim); font-size:0.9rem; line-height:1.9;">
+    <li>スマホがこのサーバーと同じWi-Fi(<span class="mono">{{ lan_ip }}</span> と同じネットワーク)に接続されているか確認してください。</li>
+    <li>スマホのモバイル通信(4G/5G)がオンだと、Wi-Fiではなくそちらに繋がってアクセスできないことがあります。一時的にオフにすると改善する場合があります。</li>
+    <li>会場のWi-Fiが「端末間通信(AP間通信)」を禁止している場合、スマホ同士やスマホ→PCへの接続がブロックされることがあります。会場・学校のネットワーク管理者に確認してください。</li>
+    <li>ポート番号({{ port }})がファイアウォールでブロックされていないか確認してください。</li>
+  </ul>
+</div>
+{% endblock %}

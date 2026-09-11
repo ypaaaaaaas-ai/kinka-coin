@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}送金{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>コイン送金</h1>
+  <p>送金データは秘密鍵で電子署名され、検証に成功すると未承認取引として一時保存されます。採掘されるとブロックに記録されます。</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="num mono" style="font-size:1.05rem;">{{ my_username }}</div><div class="label">送金者(あなた)</div></div>
+  <div class="stat-card"><div class="num">{{ my_balance }}</div><div class="label">現在の残高</div></div>
+</div>
+
+<div class="panel">
+  {% if not others %}
+    <div class="empty-state">送金相手がいません。他の人にもアカウントを作ってもらいましょう。</div>
+  {% else %}
+  <form method="post" action="{{ url_for('send.send_submit') }}">
+    <div class="form-row">
+      <label for="receiver">受取者</label>
+      <select id="receiver" name="receiver" required>
+        {% for acc in others %}
+        <option value="{{ acc.public_key_encoded }}">{{ acc.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-row" style="max-width:200px;">
+      <label for="amount">送金額</label>
+      <input id="amount" type="number" name="amount" min="1" value="1" required>
+    </div>
+    <button class="btn" type="submit">署名して送金</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <h2>未承認取引</h2>
+  <p style="color:var(--text-dim); font-size:0.9rem;">
+    現在 <strong style="color:var(--amber);">{{ pending_count }}</strong> 件の取引が未承認です。
+    <a href="{{ url_for('mine.mine_page') }}" style="color:var(--amber);">採掘画面</a>で採掘するとブロックに記録されます。
+  </p>
+</div>
+{% endblock %}

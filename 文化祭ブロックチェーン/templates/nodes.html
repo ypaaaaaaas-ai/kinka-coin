@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}ノード{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>ノード登録と同期</h1>
+  <p>複数の端末(ノード)を同じネットワークとして動かす場合、それぞれのURLを登録してチェーンを同期できます。</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="num mono" style="font-size:1.1rem;">{{ my_node_name }}</div><div class="label">ノード名</div></div>
+  <div class="stat-card"><div class="num">{{ my_port }}</div><div class="label">ポート番号</div></div>
+  <div class="stat-card"><div class="num">{{ chain_length }}</div><div class="label">自ノードのブロック数</div></div>
+</div>
+
+<div class="panel">
+  <h2>ノードを登録</h2>
+  <form method="post" action="{{ url_for('node.node_register') }}">
+    <div class="form-row">
+      <label for="address">ノードのURL</label>
+      <input id="address" type="text" name="address" placeholder="http://192.168.1.10:5001" required>
+    </div>
+    <button class="btn" type="submit">登録</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>登録済みノード</h2>
+  {% if nodes %}
+    <ul>
+      {% for n in nodes %}<li class="mono">{{ n }}</li>{% endfor %}
+    </ul>
+    <form method="post" action="{{ url_for('node.node_sync') }}">
+      <button class="btn btn-secondary" type="submit">全ノードと同期する(最長チェーンを採用)</button>
+    </form>
+  {% else %}
+  <div class="empty-state">まだノードが登録されていません。</div>
+  {% endif %}
+</div>
+{% endblock %}

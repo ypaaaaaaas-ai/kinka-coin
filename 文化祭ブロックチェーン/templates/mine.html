@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}採掘{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>採掘 (マイニング)</h1>
+  <p>未承認取引をまとめて新しいブロックを作成します。ハッシュ値が「0」で始まるnonceを探す計算(Proof of Work)を行い、成功すると報酬10コインが<strong style="color:var(--amber);">あなた({{ my_username }})</strong>に与えられます。</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="num">{{ pending_transactions|length }}</div><div class="label">未承認取引</div></div>
+  <div class="stat-card"><div class="num">{{ difficulty }}</div><div class="label">難易度(先頭0の個数)</div></div>
+  <div class="stat-card"><div class="num">10</div><div class="label">採掘報酬(コイン)</div></div>
+</div>
+
+<div class="panel">
+  <form id="mine-form" method="post" action="{{ url_for('mine.mine_run') }}">
+    <button class="btn" type="submit">採掘を実行する</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>未承認取引一覧</h2>
+  {% if pending_transactions %}
+  <table>
+    <thead><tr><th>送金者</th><th>受取者</th><th>金額</th><th>署名</th></tr></thead>
+    <tbody>
+      {% for tx in pending_transactions %}
+      <tr>
+        <td class="mono">{{ tx.sender[:20] }}...</td>
+        <td class="mono">{{ tx.receiver[:20] }}...</td>
+        <td>{{ tx.amount }}</td>
+        <td><span class="badge badge-ok">署名あり</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">未承認取引はありません。<a href="{{ url_for('send.send_page') }}" style="color:var(--amber);">送金画面</a>から送金してみましょう。</div>
+  {% endif %}
+</div>
+{% endblock %}

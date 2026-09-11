@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}管理画面ログイン{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>管理画面ログイン</h1>
+  <p>ここから先は先生・運営スタッフ用の機能です。パスワードを入力してください。</p>
+</div>
+
+<div class="panel" style="max-width:400px;">
+  <form method="post" action="{{ url_for('admin.admin_login_submit') }}">
+    <div class="form-row">
+      <label for="password">パスワード</label>
+      <input id="password" type="password" name="password" required autofocus>
+    </div>
+    <button class="btn" type="submit">ログイン</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}フォーク{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>フォーク(チェーン分岐)</h1>
+  <p>複数ノードが同時にブロックを生成すると分岐が起こります。本システムでは最も長いチェーンが正統チェーンとして採用され、それ以外は孤立チェーンとして保持されます。</p>
+</div>
+
+<div class="panel">
+  <h2>現在の正統チェーン</h2>
+  <p style="color:var(--text-dim); font-size:0.9rem;">長さ: {{ fork.main_chain_length }} ブロック</p>
+</div>
+
+<div class="panel">
+  <h2>孤立チェーン(採用されなかった分岐)</h2>
+  {% if fork.orphans %}
+    {% for orphan in fork.orphans %}
+    <div style="margin-bottom:14px; padding:12px; border:1px dashed var(--line); border-radius:8px;">
+      <p style="margin:0 0 4px; font-size:0.88rem;">長さ: {{ orphan.length }} ブロック / 分岐点: ブロック #{{ orphan.fork_point }}</p>
+      <p style="margin:0; color:var(--text-dim); font-size:0.8rem;">正統チェーンより短い(または後に届いた)ため採用されませんでした。</p>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="empty-state">現在、孤立チェーンはありません。複数ノードで同時に採掘するとここに表示されます。</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}マイページ{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>マイページ</h1>
+  <p>このスマホに記憶されているあなたのアカウント情報です。</p>
+</div>
+
+<div class="panel" style="border-color: var(--amber);">
+  <h2>{{ username }} さん</h2>
+  <div class="stat-row" style="margin-bottom:0;">
+    <div class="stat-card"><div class="num">{{ balance }}</div><div class="label">現在の残高(コイン)</div></div>
+  </div>
+  <p class="block-hash-label" style="margin-top:16px;">あなたの公開鍵(アドレス)</p>
+  <p class="block-hash" style="color: var(--text-dim);">{{ public_key }}</p>
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <h2>コインを送る</h2>
+    <p style="color:var(--text-dim); font-size:0.88rem;">友だちにコインを送金します。</p>
+    <a class="btn" href="{{ url_for('send.send_page') }}">送金画面へ</a>
+  </div>
+  <div class="panel">
+    <h2>採掘する</h2>
+    <p style="color:var(--text-dim); font-size:0.88rem;">未承認取引をブロックにまとめ、報酬10コインを受け取ります。</p>
+    <a class="btn" href="{{ url_for('mine.mine_page') }}">採掘画面へ</a>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>このスマホの記憶を解除する</h2>
+  <p style="color:var(--text-dim); font-size:0.85rem;">別の人がこの端末を使う場合など、記憶しているアカウント情報を解除できます(アカウント自体は消えません)。</p>
+  <form method="post" action="{{ url_for('account.logout') }}" onsubmit="return confirm('このスマホの「自分のアカウント」記憶を解除しますか？');">
+    <button class="btn btn-secondary" type="submit">記憶を解除する</button>
+  </form>
+</div>
+{% endblock %}
