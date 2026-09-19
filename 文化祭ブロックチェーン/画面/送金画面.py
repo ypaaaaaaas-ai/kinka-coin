@@ -37,8 +37,8 @@ send_bp = Blueprint("send", __name__)
 def send_page():
     my_account = get_my_account()
     if not my_account:
-        flash("送金するには、先に自分のアカウントを作成してください。")
-        return redirect(url_for("account.account_page"))
+        flash("送金するには、先にログインしてください。")
+        return redirect(url_for("account.login_page"))
 
     my_balance = state.blockchain.get_balance(my_account["public_key"])
 
@@ -64,8 +64,8 @@ def send_page():
 def send_submit():
     my_account = get_my_account()
     if not my_account:
-        flash("送金するには、先に自分のアカウントを作成してください。")
-        return redirect(url_for("account.account_page"))
+        flash("送金するには、先にログインしてください。")
+        return redirect(url_for("account.login_page"))
 
     sender_key = my_account["public_key"]
     receiver_key_encoded = request.form.get("receiver")

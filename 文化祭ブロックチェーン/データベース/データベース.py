@@ -57,9 +57,22 @@ class Database:
             CREATE TABLE IF NOT EXISTS accounts (
                 public_key TEXT PRIMARY KEY,
                 username TEXT,
-                private_key TEXT
+                private_key TEXT,
+                password_hash TEXT,
+                salt TEXT
             )
         """)
+
+        # ---- 移行処理: ユーザー名+パスワード認証導入前の既存DBへの対応 ----
+        # CREATE TABLE IF NOT EXISTS は既存テーブルには何もしないため、
+        # 古いDBでは列が足りない。PRAGMA table_info で列を調べ、
+        # 無ければ ALTER TABLE で追加する(旧アカウントはパスワード未設定になる)。
+        cur.execute("PRAGMA table_info(accounts)")
+        existing_columns = {row[1] for row in cur.fetchall()}
+        if "password_hash" not in existing_columns:
+            cur.execute("ALTER TABLE accounts ADD COLUMN password_hash TEXT")
+        if "salt" not in existing_columns:
+            cur.execute("ALTER TABLE accounts ADD COLUMN salt TEXT")
 
         conn.commit()
         conn.close()

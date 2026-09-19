@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}ログイン{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>ログイン</h1>
+  <p>ユーザー名とパスワードでログインします。アカウントをお持ちでない場合は、先に「アカウント」ページで作成してください。</p>
+</div>
+
+<div class="panel" style="border-color: var(--amber);">
+  <h2>ログイン</h2>
+  <form method="post" action="{{ url_for('account.login') }}">
+    <div class="form-row">
+      <label for="username">ユーザー名</label>
+      <input id="username" type="text" name="username" required maxlength="30" autocomplete="username">
+    </div>
+    <div class="form-row">
+      <label for="password">パスワード</label>
+      <input id="password" type="password" name="password" required autocomplete="current-password">
+    </div>
+    <button class="btn" type="submit">ログイン</button>
+  </form>
+  <p style="margin-top:14px; color:var(--text-dim); font-size:0.85rem;">
+    アカウントをまだお持ちでない方は
+    <a href="{{ url_for('account.account_page') }}" style="color:var(--amber);">アカウント作成へ →</a>
+  </p>
+</div>
+{% endblock %}

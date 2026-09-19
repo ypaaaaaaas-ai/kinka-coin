@@ -3,7 +3,7 @@
 {% block content %}
 <div class="page-head">
   <h1>マイページ</h1>
-  <p>このスマホに記憶されているあなたのアカウント情報です。</p>
+  <p>ログイン中のあなたのアカウント情報です。</p>
 </div>
 
 <div class="panel" style="border-color: var(--amber);">
@@ -29,10 +29,10 @@
 </div>
 
 <div class="panel">
-  <h2>このスマホの記憶を解除する</h2>
-  <p style="color:var(--text-dim); font-size:0.85rem;">別の人がこの端末を使う場合など、記憶しているアカウント情報を解除できます(アカウント自体は消えません)。</p>
-  <form method="post" action="{{ url_for('account.logout') }}" onsubmit="return confirm('このスマホの「自分のアカウント」記憶を解除しますか？');">
-    <button class="btn btn-secondary" type="submit">記憶を解除する</button>
+  <h2>ログアウトする</h2>
+  <p style="color:var(--text-dim); font-size:0.85rem;">別の人がこの端末を使う場合などはログアウトしてください。再度使うときは /login から、ユーザー名とパスワードでログインできます(アカウント自体は消えません)。</p>
+  <form method="post" action="{{ url_for('account.logout') }}" onsubmit="return confirm('ログアウトしますか？');">
+    <button class="btn btn-secondary" type="submit">ログアウト</button>
   </form>
 </div>
 {% endblock %}

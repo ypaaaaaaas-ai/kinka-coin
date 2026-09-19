@@ -3,30 +3,44 @@
 {% block content %}
 <div class="page-head">
   <h1>アカウント作成・残高確認</h1>
-  <p>ユーザー名を入力すると、公開鍵・秘密鍵のペアが自動生成されます。作成すると、このスマホに「自分のアカウント」として記憶されます。</p>
+  <p>ユーザー名とパスワードを設定すると、公開鍵・秘密鍵のペアが自動生成されます。作成すると自動的にログインし、このスマホに記憶されます。</p>
 </div>
 
 {% if my_username %}
 <div class="panel" style="border-color: var(--teal);">
-  <p style="margin:0;">このスマホは <strong style="color: var(--teal);">{{ my_username }}</strong> さんのアカウントとして記憶されています。
+  <p style="margin:0;">現在 <strong style="color: var(--teal);">{{ my_username }}</strong> さんとしてログイン中です。
     <a href="{{ url_for('account.me_page') }}" style="color: var(--amber);">マイページを見る →</a></p>
 </div>
 {% endif %}
 
 <div class="panel">
   <h2>新規アカウント作成</h2>
+  <p style="color:var(--text-dim); font-size:0.82rem; margin-top:-6px;">
+    ユーザー名はシステム内で重複できません。パスワードはログイン時に必要なので、忘れないようにしてください。</p>
   <form method="post" action="{{ url_for('account.account_create') }}">
     <div class="form-row">
       <label for="username">ユーザー名</label>
-      <input id="username" type="text" name="username" placeholder="例: たなか" required maxlength="30">
+      <input id="username" type="text" name="username" placeholder="例: たなか" required maxlength="30" autocomplete="off">
+    </div>
+    <div class="form-row">
+      <label for="password">パスワード</label>
+      <input id="password" type="password" name="password" placeholder="{{ 4 }}文字以上" required minlength="4" autocomplete="new-password">
+    </div>
+    <div class="form-row">
+      <label for="password_confirm">パスワード(確認)</label>
+      <input id="password_confirm" type="password" name="password_confirm" placeholder="同じパスワードをもう一度" required minlength="4" autocomplete="new-password">
     </div>
     <button class="btn" type="submit">アカウントを作成</button>
   </form>
+  <p style="margin-top:14px; color:var(--text-dim); font-size:0.85rem;">
+    すでにアカウントをお持ちの方は
+    <a href="{{ url_for('account.login_page') }}" style="color:var(--amber);">ログインへ →</a>
+  </p>
 </div>
 
 <div class="panel">
   <h2>登録済みアカウント一覧(公開情報)</h2>
-  <p style="color:var(--text-dim); font-size:0.82rem; margin-top:-6px;">秘密鍵はサーバー内で安全に保持されており、画面には表示されません。</p>
+  <p style="color:var(--text-dim); font-size:0.82rem; margin-top:-6px;">秘密鍵はサーバー内で安全に保持されており、画面には表示されません。パスワードもハッシュ化して保存しています。</p>
   {% if accounts %}
   <table>
     <thead>
@@ -35,7 +49,7 @@
     <tbody>
       {% for acc in accounts %}
       <tr {% if acc.is_me %}style="background: rgba(61,218,192,0.06);"{% endif %}>
-        <td>{{ acc.username }}{% if acc.is_me %} <span class="badge badge-ok">あなた</span>{% endif %}</td>
+        <td>{{ acc.username }}{% if acc.is_me %} <span class="badge badge-ok">あなた</span>{% endif %}{% if not acc.has_password %} <span class="badge" style="color:var(--text-dim);">旧形式</span>{% endif %}</td>
         <td class="mono">{{ acc.public_key_short }}</td>
         <td>{{ acc.balance }} コイン</td>
       </tr>

@@ -16,6 +16,7 @@
     <nav class="nav">
       <a href="{{ url_for('index') }}" class="{{ 'is-active' if request.path == '/' else '' }}">チェーン</a>
       <a href="{{ url_for('account.me_page') }}" class="{{ 'is-active' if request.path == '/me' else '' }}">マイページ</a>
+      <a href="{{ url_for('account.login_page') }}" class="{{ 'is-active' if request.path == '/login' else '' }}">ログイン</a>
       <a href="{{ url_for('account.account_page') }}" class="{{ 'is-active' if request.path.startswith('/account') else '' }}">アカウント</a>
       <a href="{{ url_for('send.send_page') }}" class="{{ 'is-active' if request.path.startswith('/send') else '' }}">送金</a>
       <a href="{{ url_for('mine.mine_page') }}" class="{{ 'is-active' if request.path.startswith('/mine') else '' }}">採掘</a>

@@ -33,8 +33,8 @@ mine_bp = Blueprint("mine", __name__)
 def mine_page():
     my_account = get_my_account()
     if not my_account:
-        flash("採掘するには、先に自分のアカウントを作成してください。")
-        return redirect(url_for("account.account_page"))
+        flash("採掘するには、先にログインしてください。")
+        return redirect(url_for("account.login_page"))
 
     return render_template(
         "mine.html",
@@ -48,8 +48,8 @@ def mine_page():
 def mine_run():
     my_account = get_my_account()
     if not my_account:
-        flash("採掘するには、先に自分のアカウントを作成してください。")
-        return redirect(url_for("account.account_page"))
+        flash("採掘するには、先にログインしてください。")
+        return redirect(url_for("account.login_page"))
 
     miner_key = my_account["public_key"]
     previous_block = state.blockchain.get_latest_block()
