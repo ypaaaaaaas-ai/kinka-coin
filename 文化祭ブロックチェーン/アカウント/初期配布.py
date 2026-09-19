@@ -8,7 +8,7 @@
     「運営(管理者)が最初にたくさんコインを持っていて、
       来場者は採掘や管理者からの送金でコインを手に入れる」
 => サーバー起動時と全初期化(reset_all)の直後に、
-   1. 管理者アカウント(デフォルト: けん)が無ければ自動で作成し、
+   1. 管理者アカウント(デフォルト: admin)が無ければ自動で作成し、
    2. 「SYSTEM -> 管理者」の発行取引(INITIAL_SUPPLYコイン)を
       採掘報酬と同じ仕組み(SYSTEM送信者・署名不要)でブロックに記録する。
 
@@ -20,7 +20,7 @@
     ブロックチェーンの本質的な問い(コインベース)を体験できる。
 
 環境変数での上書き(複数ノード運用のヒント):
-    ADMIN_WALLET_NAME      管理者のユーザー名 (デフォルト: けん)
+    ADMIN_WALLET_NAME      管理者のユーザー名 (デフォルト: admin)
     ADMIN_WALLET_PASSWORD  管理者のパスワード   (デフォルト: kinka)
     ADMIN_INITIAL_SUPPLY   初期配布コイン数     (デフォルト: 1000000)
     複数ノードで同期する場合は、副ノード側で ADMIN_INITIAL_SUPPLY=0 を
@@ -34,7 +34,7 @@ from datetime import datetime, timezone
 sys.path.append(os.path.dirname(__file__))
 from アカウント import Account  # noqa: E402
 
-ADMIN_USERNAME = os.environ.get("ADMIN_WALLET_NAME", "けん")
+ADMIN_USERNAME = os.environ.get("ADMIN_WALLET_NAME", "admin")
 ADMIN_WALLET_PASSWORD = os.environ.get("ADMIN_WALLET_PASSWORD", "kinka")
 INITIAL_SUPPLY = int(os.environ.get("ADMIN_INITIAL_SUPPLY", "1000000"))
 

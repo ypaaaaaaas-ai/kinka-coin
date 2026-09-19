@@ -51,7 +51,7 @@ def send_page():
         if acc["public_key"] != my_account["public_key"]
     ]
 
-    # ---- QRコードからの自動入力(/send?user=けん&amount=300) ----
+    # ---- QRコードからの自動入力(/send?user=admin&amount=300) ----
     # スマホのカメラで受け取り用QRを読み取ると、このクエリ付きで
     # 送金画面が開く。受取人と金額をあらかじめフォームに設定する。
     prefill_to = None
