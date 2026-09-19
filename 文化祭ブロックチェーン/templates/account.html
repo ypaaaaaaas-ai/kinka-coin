@@ -49,7 +49,7 @@
     <tbody>
       {% for acc in accounts %}
       <tr {% if acc.is_me %}style="background: rgba(61,218,192,0.06);"{% endif %}>
-        <td>{{ acc.username }}{% if acc.is_me %} <span class="badge badge-ok">あなた</span>{% endif %}{% if not acc.has_password %} <span class="badge" style="color:var(--text-dim);">旧形式</span>{% endif %}</td>
+        <td>{{ acc.username }}{% if acc.is_admin %} <span class="badge badge-ok">管理者</span>{% endif %}{% if acc.is_me %} <span class="badge badge-ok">あなた</span>{% endif %}{% if not acc.has_password %} <span class="badge" style="color:var(--text-dim);">旧形式</span>{% endif %}</td>
         <td class="mono">{{ acc.public_key_short }}</td>
         <td>{{ acc.balance }} コイン</td>
       </tr>

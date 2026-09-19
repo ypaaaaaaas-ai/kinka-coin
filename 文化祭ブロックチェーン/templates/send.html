@@ -12,6 +12,18 @@
 </div>
 
 <div class="panel">
+  {% if qr_notice %}
+    <div class="empty-state" style="border:1px dashed var(--text-dim);">{{ qr_notice }}</div>
+  {% endif %}
+  {% if prefill_name %}
+    <div style="border:1px solid var(--amber); padding:12px 14px; margin-bottom:16px;">
+      <p style="margin:0; color:var(--amber); font-weight:bold;">📷 QRコードから受取人を設定しました</p>
+      <p style="margin:6px 0 0; color:var(--text-dim); font-size:0.9rem;">
+        受取人: <strong style="color:var(--text);">{{ prefill_name }}</strong>
+        {% if prefill_amount %} / 金額: <strong style="color:var(--text);">{{ prefill_amount }}</strong> コイン(入力済み){% endif %}<br>
+        内容を確認して「署名して送金」を押してください。</p>
+    </div>
+  {% endif %}
   {% if not others %}
     <div class="empty-state">送金相手がいません。他の人にもアカウントを作ってもらいましょう。</div>
   {% else %}
@@ -20,13 +32,13 @@
       <label for="receiver">受取者</label>
       <select id="receiver" name="receiver" required>
         {% for acc in others %}
-        <option value="{{ acc.public_key_encoded }}">{{ acc.username }}</option>
+        <option value="{{ acc.public_key_encoded }}" {% if prefill_to == acc.public_key_encoded %}selected{% endif %}>{{ acc.username }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="form-row" style="max-width:200px;">
       <label for="amount">送金額</label>
-      <input id="amount" type="number" name="amount" min="1" value="1" required>
+      <input id="amount" type="number" name="amount" min="1" value="{{ prefill_amount if prefill_amount else 1 }}" required>
     </div>
     <button class="btn" type="submit">署名して送金</button>
   </form>

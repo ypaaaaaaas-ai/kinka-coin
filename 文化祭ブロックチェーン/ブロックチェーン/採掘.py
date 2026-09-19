@@ -33,7 +33,8 @@ class Miner:
     def __init__(self, difficulty: int = DEFAULT_DIFFICULTY):
         self.difficulty = difficulty
 
-    def mine(self, pending_transactions: list, previous_block: dict, miner_address: str):
+    def mine(self, pending_transactions: list, previous_block: dict, miner_address: str,
+             include_reward: bool = True):
         """
         未承認取引と前ブロック情報から、新しいブロックを採掘する。
 
@@ -45,21 +46,26 @@ class Miner:
             直前のブロック(辞書)。
         miner_address : str
             採掘者(報酬の受取人)の公開鍵。
+        include_reward : bool, optional
+            Falseにすると採掘報酬の取引を含めない。
+            (管理者への初期配布など、報酬なしのブロックを作る場合に使う)
 
         Returns
         -------
         dict
             採掘に成功した新しいブロック(辞書)。
         """
-        reward_transaction = {
-            "sender": "SYSTEM",
-            "receiver": miner_address,
-            "amount": MINING_REWARD,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "signature": None,
-        }
+        transactions = list(pending_transactions)
 
-        transactions = list(pending_transactions) + [reward_transaction]
+        if include_reward:
+            reward_transaction = {
+                "sender": "SYSTEM",
+                "receiver": miner_address,
+                "amount": MINING_REWARD,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "signature": None,
+            }
+            transactions.append(reward_transaction)
 
         new_block = Block(
             index=previous_block.get("index") + 1,

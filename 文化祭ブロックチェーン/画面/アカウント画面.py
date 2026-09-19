@@ -19,6 +19,8 @@
 
 import sys
 import os
+import io
+import urllib.parse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import 状態 as state  # noqa: E402
@@ -29,7 +31,10 @@ from アカウント import Account  # noqa: E402
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "暗号"))
 from パスワード import verify_password  # noqa: E402
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "表示"))
+import qr生成  # noqa: E402
+
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, Response  # noqa: E402
 
 account_bp = Blueprint("account", __name__)
 
@@ -65,6 +70,7 @@ def account_page():
             "public_key_short": acc["public_key"][:60] + "...",
             "balance": balance,
             "has_password": bool(acc.get("password_hash")),
+            "is_admin": acc["username"] == state.ADMIN_USERNAME,
             "is_me": session.get(SESSION_USERNAME) == acc["username"]
                      and state.decode_key(session.get(SESSION_KEY, "")) == acc["public_key"],
         })
@@ -166,20 +172,75 @@ def login():
 
 @account_bp.route("/me", methods=["GET"])
 def me_page():
-    """マイページ: ログイン中のアカウント情報を表示する。"""
+    """マイページ: ログイン中のアカウント情報と受け取り用QRコードを表示する。"""
     my_account = get_my_account()
     if not my_account:
         flash("マイページを見るにはログインしてください。")
         return redirect(url_for("account.login_page"))
 
     balance = state.blockchain.get_balance(my_account["public_key"])
+
+    # 金額固定QR(売店向け): /me?qr_amount=300 のように指定すると
+    # 「受け取る金額まで入力済み」のQRコードを表示できる。
+    qr_amount = None
+    raw = request.args.get("qr_amount", "")
+    if raw:
+        try:
+            value = int(raw)
+            if value > 0:
+                qr_amount = value
+        except ValueError:
+            pass
+
     return render_template(
         "me.html",
         username=my_account["username"],
         public_key=my_account["public_key"],
         public_key_encoded=state.encode_key(my_account["public_key"]),
         balance=balance,
+        is_admin=my_account["username"] == state.ADMIN_USERNAME,
+        qr_amount=qr_amount,
     )
+
+
+@account_bp.route("/my-qr.png", methods=["GET"])
+def my_qr_image():
+    """
+    受け取り用QRコード画像(自分を受取人にした送金URLをQR化する)。
+
+    QRの中身は次のようなURL:
+        http://<サーバーのLAN IP>:<PORT>/send?user=<ユーザー名>(&amount=<金額>)
+    友だちがスマホのカメラで読み取ると、受取人(と金額)が入力済みの
+    送金画面が開く。ユーザー名は一意なのでURLが短くて済み、
+    暗い会場でも読み取りやすい小さなQRになる。
+    """
+    my_account = get_my_account()
+    if not my_account:
+        return Response("ログインが必要です", status=404, mimetype="text/plain")
+
+    url = build_receive_url(my_account["username"], request.args.get("amount", ""))
+    img = qr生成.generate_png(url, scale=10, border=3)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return Response(buf.getvalue(), mimetype="image/png")
+
+
+def build_receive_url(username: str, amount_raw: str = "") -> str:
+    """
+    受け取り用QRコードに埋め込む送金URLを作る。
+    金額が指定されていれば &amount= も付ける(売店などの金額固定QR向け)。
+    """
+    base_url = f"http://{state.get_lan_ip()}:{state.PORT}"
+    url = f"{base_url}/send?user={urllib.parse.quote(username)}"
+    if amount_raw:
+        try:
+            amount = int(amount_raw)
+            if amount > 0:
+                url += f"&amount={amount}"
+        except ValueError:
+            pass  # 不正な金額は金額なしQRに落とす
+    return url
 
 
 @account_bp.route("/logout", methods=["POST"])

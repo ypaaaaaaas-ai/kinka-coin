@@ -39,6 +39,10 @@ from ブロック保存 import BlockRepository  # noqa: E402
 from 取引保存 import TransactionRepository  # noqa: E402
 from アカウント保存 import AccountRepository  # noqa: E402
 
+# 管理者ウォレットの自動作成・初期配布(アカウント/初期配布.py)
+from 初期配布 import ensure_admin_wallet  # noqa: E402
+from 初期配布 import ADMIN_USERNAME, ADMIN_WALLET_PASSWORD, INITIAL_SUPPLY as ADMIN_INITIAL_SUPPLY  # noqa: E402
+
 
 NODE_NAME = os.environ.get("NODE_NAME", "node1")
 PORT = int(os.environ.get("PORT", 5000))
@@ -104,6 +108,12 @@ def persist_pending():
         tx_repo.save_pending(tx)
 
 
+# ---- 管理者ウォレットの保証(起動のたびにチェック) ----
+# 新規DB・全初期化後・管理者アカウントが存在しないDB(旧バージョンで作ったDB)
+# のいずれでも、ここで管理者アカウントと初期コインが用意される。
+ADMIN_WALLET_INFO = ensure_admin_wallet(account_repo, blockchain, miner, persist_chain)
+
+
 def encode_key(public_key_pem: str) -> str:
     """
     公開鍵(複数行のPEM文字列)をHTMLフォームのvalueとして安全に運べる
@@ -127,9 +137,14 @@ def decode_key(encoded: str) -> str:
 def reset_all():
     """管理画面用: チェーン・未承認取引・アカウントを全て初期化する。
     (「ゲーム終了時にコインを運営に返させる」= 展示終了時の全体リセットに利用)
+
+    初期化後は管理者ウォレットを再作成し、初期コインを再配布する。
+    これで「朝リセット→昼も営業→翌日またリセット」という展示運用が
+    サーバー再起動なしで回るようになる。
     """
     global blockchain
     database.reset()
     blockchain = Blockchain()
     persist_chain()
     chain_sync.blockchain = blockchain
+    ensure_admin_wallet(account_repo, blockchain, miner, persist_chain)

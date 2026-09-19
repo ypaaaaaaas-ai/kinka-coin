@@ -206,6 +206,10 @@ if __name__ == "__main__":
     print("  ※ スマホがこのPCと同じWi-Fi(同じネットワーク)に")
     print("    つながっている必要があります。")
     print(f"[管理画面パスワード]     {state.ADMIN_PASSWORD} (環境変数 ADMIN_PASSWORD で変更可)")
+    print(f"[管理者ウォレット]       ユーザー名: {state.ADMIN_USERNAME} / パスワード: {state.ADMIN_WALLET_PASSWORD} "
+          f"(環境変数 ADMIN_WALLET_NAME / ADMIN_WALLET_PASSWORD で変更可)")
+    print(f"[初期配布コイン]         {state.ADMIN_INITIAL_SUPPLY} コインを {state.ADMIN_USERNAME} に配布"
+          f"(0にすると配布なし。複数ノード運用では副ノード側を0に推奨)")
     if debug_mode:
         print("[警告] DEBUGモードで起動しています。展示本番では使わないでください。")
     print("=" * 60)

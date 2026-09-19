@@ -7,7 +7,7 @@
 </div>
 
 <div class="panel" style="border-color: var(--amber);">
-  <h2>{{ username }} さん</h2>
+  <h2>{{ username }} さん{% if is_admin %} <span class="badge badge-ok">管理者</span>{% endif %}</h2>
   <div class="stat-row" style="margin-bottom:0;">
     <div class="stat-card"><div class="num">{{ balance }}</div><div class="label">現在の残高(コイン)</div></div>
   </div>
@@ -16,16 +16,37 @@
 </div>
 
 <div class="grid-2">
+  <div class="panel" style="text-align:center;">
+    <h2>QRコードで受け取る</h2>
+    <p style="color:var(--text-dim); font-size:0.88rem;">友だちがこのQRをスマホのカメラで読み取ると、あなたを受取人にした送金画面が開きます。</p>
+    {% if qr_amount %}
+      <img src="{{ url_for('account.my_qr_image', amount=qr_amount) }}" alt="{{ qr_amount }}コイン入りの受け取り用QRコード" style="width:min(260px,80%);image-rendering:pixelated;background:#fff;padding:10px;">
+      <p style="color:var(--amber); font-weight:bold; margin:10px 0 0;">金額 {{ qr_amount }} コイン入りQR</p>
+    {% else %}
+      <img src="{{ url_for('account.my_qr_image') }}" alt="受け取り用QRコード" style="width:min(260px,80%);image-rendering:pixelated;background:#fff;padding:10px;">
+      <p style="color:var(--text-dim); font-size:0.85rem; margin:10px 0 0;">受取人: {{ username }}</p>
+    {% endif %}
+    <form method="get" action="{{ url_for('account.me_page') }}" style="margin-top:14px;">
+      <div class="form-row" style="text-align:left; max-width:220px; margin-left:auto; margin-right:auto;">
+        <label for="qr_amount">金額を固定する(売店向け)</label>
+        <input id="qr_amount" type="number" name="qr_amount" min="1" value="{{ qr_amount if qr_amount else '' }}" placeholder="例: 300">
+      </div>
+      <button class="btn btn-secondary" type="submit">この金額のQRに切り替える</button>
+    </form>
+    {% if qr_amount %}<p style="margin-top:8px;"><a href="{{ url_for('account.me_page') }}" style="color:var(--amber);">金額なしのQRに戻す →</a></p>{% endif %}
+  </div>
   <div class="panel">
     <h2>コインを送る</h2>
     <p style="color:var(--text-dim); font-size:0.88rem;">友だちにコインを送金します。</p>
     <a class="btn" href="{{ url_for('send.send_page') }}">送金画面へ</a>
+    <p style="color:var(--text-dim); font-size:0.82rem; margin-top:10px;">ヒント: マイページのQRを読み込んでもらうと、受取人の入力を省略できます。</p>
   </div>
-  <div class="panel">
-    <h2>採掘する</h2>
-    <p style="color:var(--text-dim); font-size:0.88rem;">未承認取引をブロックにまとめ、報酬10コインを受け取ります。</p>
-    <a class="btn" href="{{ url_for('mine.mine_page') }}">採掘画面へ</a>
-  </div>
+</div>
+
+<div class="panel">
+  <h2>採掘する</h2>
+  <p style="color:var(--text-dim); font-size:0.88rem;">未承認取引をブロックにまとめ、報酬10コインを受け取ります。</p>
+  <a class="btn" href="{{ url_for('mine.mine_page') }}">採掘画面へ</a>
 </div>
 
 <div class="panel">

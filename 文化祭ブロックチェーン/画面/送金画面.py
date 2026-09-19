@@ -51,12 +51,43 @@ def send_page():
         if acc["public_key"] != my_account["public_key"]
     ]
 
+    # ---- QRコードからの自動入力(/send?user=けん&amount=300) ----
+    # スマホのカメラで受け取り用QRを読み取ると、このクエリ付きで
+    # 送金画面が開く。受取人と金額をあらかじめフォームに設定する。
+    prefill_to = None
+    prefill_name = None
+    prefill_amount = None
+    qr_notice = None
+
+    qr_user = request.args.get("user", "").strip()
+    if qr_user:
+        target = state.account_repo.find_by_username(qr_user)
+        if target is None:
+            qr_notice = f"QRコードの受取人「{qr_user}」が見つかりません。アカウントが削除された可能性があります。"
+        elif target["public_key"] == my_account["public_key"]:
+            qr_notice = "これはあなた自身の受け取り用QRコードです。友だちに読み込んでもらいましょう。"
+        else:
+            prefill_to = state.encode_key(target["public_key"])
+            prefill_name = target["username"]
+            raw_amount = request.args.get("amount", "").strip()
+            if raw_amount:
+                try:
+                    value = int(raw_amount)
+                    if value > 0:
+                        prefill_amount = value
+                except ValueError:
+                    pass  # 不正な金額は無視して手入力してもらう
+
     return render_template(
         "send.html",
         my_username=my_account["username"],
         my_balance=my_balance,
         others=others,
         pending_count=len(state.blockchain.pending_transactions),
+        prefill_to=prefill_to,
+        prefill_name=prefill_name,
+        prefill_amount=prefill_amount,
+        qr_notice=qr_notice,
     )
 
 
